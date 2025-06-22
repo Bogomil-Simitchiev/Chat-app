@@ -6,10 +6,11 @@ import Home from "../components/Home/Home.jsx";
 import FriendsList from "../components/FriendsList/FriendsList.jsx";
 import RequestedList from "../components/RequestedList/RequestedList.jsx";
 import AddFriend from "../components/AddFriend/AddFriend.jsx";
+import Messages from "../components/Messages/Messages.jsx";
 
 const AppRoutes = () => (
     <Routes>
-      // Define the routes for 'Messages betweem 2 friends'
+      <Route path="/messages" element={<Messages />} />
       <Route path="/add-friend" element={<AddFriend />} />
       <Route path="/requests" element={<RequestedList />} />
       <Route path="/friends" element={<FriendsList />} />
