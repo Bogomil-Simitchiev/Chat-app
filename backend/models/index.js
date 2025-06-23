@@ -2,6 +2,8 @@ import mongoose from 'mongoose';
 import dotenv from 'dotenv';
 dotenv.config();
 
+import './User.js';
+
 const databaseName = 'chat-app';
 
 const connectionString = `mongodb+srv://${process.env.MONGODB_NAME}:${process.env.MONGODB_PASSWORD}@atlascluster.9za4ktm.mongodb.net/${databaseName}?retryWrites=true&w=majority`;
