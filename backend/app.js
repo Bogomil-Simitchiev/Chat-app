@@ -3,8 +3,9 @@ import cors from 'cors';
 import dotenv from 'dotenv';
 import http from 'http';
 import { Server } from 'socket.io';
+import session from 'express-session';
 import initializeDB from './models/index.js';
-
+import authController from './controllers/auth/authentication.js';
 dotenv.config();
 
 const app = express();
@@ -19,14 +20,14 @@ const io = new Server(server, {
 
 app.use(cors());
 app.use(express.json());
+app.use(session({
+    secret: 'super secret',
+    resave: false,
+    saveUninitialized: true,
+    cookie: { secure: 'auto' }
+}))
 
-app.get('/api', (req, res) => {
-  res.json('API is running...TEST');
-});
-app.get('/api/name', (req, res) => {
-  res.json('API is running...with name!!!');
-});
-
+app.use('/api/auth', authController);
 
 io.on('connection', (socket) => {
   console.log('User connected:', socket.id);
