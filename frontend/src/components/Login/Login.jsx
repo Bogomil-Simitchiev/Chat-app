@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 
 const Login = () => {
   const [form, setForm] = useState({
-    email: "",
+    nickname: "",
     password: "",
   });
 
@@ -24,10 +24,10 @@ const Login = () => {
         <h2 className="login-title">Login</h2>
 
         <input
-          type="email"
-          name="email"
-          placeholder="Email"
-          value={form.email}
+          type="text"
+          name="nickname"
+          placeholder="Nickname"
+          value={form.nickname}
           onChange={handleChange}
           required
         />
