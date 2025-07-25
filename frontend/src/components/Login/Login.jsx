@@ -14,6 +14,7 @@ const Login = () => {
     login(nickname, password)
       .then((result) => {
         loginUser(result);
+        e.target.reset();
       })
       .catch((err) => console.log(err));
   };
