@@ -1,4 +1,6 @@
+// services/authService.js
 import User from '../models/User.js';
+import { generateToken } from '../utils/tokenUtils.js';
 
 export async function register(email, nickname, password) {
     const existingUser = await User.findOne({ nickname });
@@ -13,9 +15,14 @@ export async function register(email, nickname, password) {
     });
     await user.save();
 
+    const token = generateToken({ id: user._id, nickname: user.nickname });
+
     return {
-        userId: user._id,
-        nickname: user.nickname,
+        user: {
+            userId: user._id,
+            nickname: user.nickname,
+        },
+        token
     };
 }
 
@@ -30,8 +37,13 @@ export async function login(nickname, password) {
         throw new Error('Incorrect password!');
     }
 
+    const token = generateToken({ id: user._id, nickname: user.nickname });
+
     return {
-        userId: user._id,
-        nickname: user.nickname,
+        user: {
+            userId: user._id,
+            nickname: user.nickname,
+        },
+        token
     };
 }
