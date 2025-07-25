@@ -1,45 +1,34 @@
-import { useState } from "react";
+import { login } from "../../services/authService";
 import "./Login.css";
 import { Link } from "react-router-dom";
 
 const Login = () => {
-  const [form, setForm] = useState({
-    nickname: "",
-    password: "",
-  });
-
-  const handleChange = (e) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
-  };
-
-  const handleSubmit = (e) => {
+  const loginHandler = (e) => {
     e.preventDefault();
-   
-    console.log("Login user:", form);
+
+    const { nickname, password } = Object.fromEntries(new FormData(e.target));
+    login(nickname, password)
+      .then((result) => {
+        console.log(result);
+      })
+      .catch((err) => console.log(err));
   };
 
   return (
     <div className="login-container">
-      <form className="login-form" onSubmit={handleSubmit}>
+      <form className="login-form" onSubmit={loginHandler}>
         <h2 className="login-title">Login</h2>
 
-        <input
-          type="text"
-          name="nickname"
-          placeholder="Nickname"
-          value={form.nickname}
-          onChange={handleChange}
-          required
-        />
+        <input type="text" name="nickname" placeholder="Nickname" required />
         <input
           type="password"
           name="password"
           placeholder="Password"
-          value={form.password}
-          onChange={handleChange}
           required
         />
-        <p className="register-link">Don't have an account? <Link to={'/register'}>Create one</Link></p>
+        <p className="register-link">
+          Don't have an account? <Link to={"/register"}>Create one</Link>
+        </p>
         <button type="submit">Login</button>
       </form>
     </div>
