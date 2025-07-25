@@ -1,15 +1,19 @@
+import { useContext } from "react";
+import AuthContext from "../../contexts/AuthContext";
 import { login } from "../../services/authService";
 import "./Login.css";
 import { Link } from "react-router-dom";
 
 const Login = () => {
+  const { loginUser } = useContext(AuthContext);
+
   const loginHandler = (e) => {
     e.preventDefault();
 
     const { nickname, password } = Object.fromEntries(new FormData(e.target));
     login(nickname, password)
       .then((result) => {
-        console.log(result);
+        loginUser(result);
       })
       .catch((err) => console.log(err));
   };
