@@ -19,3 +19,9 @@ export const login = (nickname, password) => {
         body: JSON.stringify({ nickname, password })
     }).then(res => res.json())
 }
+
+export const logout = () => {
+    return fetch(`${baseURL}/api/auth/logout`, {
+        method: 'POST',
+    }).then(res => res.json())
+}
