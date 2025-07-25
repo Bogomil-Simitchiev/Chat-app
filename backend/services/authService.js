@@ -14,7 +14,7 @@ export async function register(email, nickname, password) {
     await user.save();
 
     return {
-        id: user._id,
+        userId: user._id,
         nickname: user.nickname,
     };
 }
