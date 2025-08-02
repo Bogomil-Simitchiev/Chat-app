@@ -5,6 +5,8 @@ const userSchema = new Schema({
     email: { type: String, required: true },
     nickname: { type: String, required: true, minlength: 3 },
     hashedPassword: { type: String, required: true },
+    friends: [{ type: Schema.Types.ObjectId, ref: 'User' }],
+    requests: [{ type: Schema.Types.ObjectId, ref: 'User' }]
 });
 
 userSchema.index({ nickname: 1 }, {
