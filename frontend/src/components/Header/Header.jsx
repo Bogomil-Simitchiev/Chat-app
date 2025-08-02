@@ -3,6 +3,8 @@ import { Link } from "react-router-dom";
 import "./Header.css";
 import AuthContext from "../../contexts/AuthContext";
 import { logout } from "../../services/authService";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faUserPlus, faUsers, faBell, faArrowRightFromBracket } from "@fortawesome/free-solid-svg-icons";
 
 const Header = () => {
   const { user, logoutUser } = useContext(AuthContext);
@@ -22,13 +24,21 @@ const Header = () => {
           Talkie
         </Link>
         <nav className="nav-links">
-          <span className="welcome">
-            {user.token ? " Welcome, " + user.user.nickname : <></>}
-          </span>
           {user.token ? (
-            <Link onClick={logoutHandler} className="nav-link">
-              Logout
-            </Link>
+            <>
+              <Link to={"/requests"} className="nav-link">
+                <FontAwesomeIcon icon={faBell} />
+              </Link>
+              <Link to={"/friends"} className="nav-link">
+                <FontAwesomeIcon icon={faUsers} />
+              </Link>
+              <Link to={"/add-friend"} className="nav-link">
+                <FontAwesomeIcon icon={faUserPlus} />
+              </Link>
+              <Link onClick={logoutHandler} className="nav-link">
+                <FontAwesomeIcon icon={faArrowRightFromBracket} />
+              </Link>
+            </>
           ) : (
             <>
               <Link to="/login" className="nav-link">
