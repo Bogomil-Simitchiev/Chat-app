@@ -25,15 +25,20 @@ const Header = () => {
           <span className="welcome">
             {user.token ? " Welcome, " + user.user.nickname : <></>}
           </span>
-          <Link to="/login" className="nav-link">
-            Login
-          </Link>
-          <Link to="/register" className="nav-link">
-            Register
-          </Link>
-          <Link onClick={logoutHandler} className="nav-link">
-            Logout
-          </Link>
+          {user.token ? (
+            <Link onClick={logoutHandler} className="nav-link">
+              Logout
+            </Link>
+          ) : (
+            <>
+              <Link to="/login" className="nav-link">
+                Login
+              </Link>
+              <Link to="/register" className="nav-link">
+                Register
+              </Link>
+            </>
+          )}
         </nav>
       </div>
     </header>
