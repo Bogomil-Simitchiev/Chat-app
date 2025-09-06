@@ -35,4 +35,23 @@ router.post('/add-friend', async (req, res) => {
     }
 });
 
+router.get('/requests/:userId', async (req, res) => {
+    try {
+        const { userId } = req.params;
+
+        const user = await User.findById(userId).populate('requests', 'nickname email');
+
+        if (!user) {
+            return res.status(404).json({ message: "User not found." });
+        }
+
+        res.json({ requests: user.requests });
+    } catch (error) {
+        console.error("Error fetching requests:", error);
+        res.status(500).json({ message: "Server error." });
+    }
+});
+
+// Additional routes for accepting/declining requests and removing friends can be added here
+
 export default router;

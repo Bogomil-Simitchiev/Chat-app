@@ -9,3 +9,12 @@ export const addFriend = (senderNickname, recipientNickname) => {
         body: JSON.stringify({ senderNickname, recipientNickname })
     }).then(res => res.json())
 }
+
+export const getRequestedPeople = (userId) => {
+    return fetch(`${baseURL}/api/requests/${userId}`, {
+        method: 'GET',
+        headers: {
+            'content-type': 'application/json'
+        }
+    }).then(res => res.json())
+}

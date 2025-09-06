@@ -1,38 +1,57 @@
+import { useEffect, useState, useContext } from "react";
 import "./RequestedList.css";
-
-const mockFriends = [
-  { id: 1, name: "Alice Johnson", status: "online" },
-  { id: 2, name: "Bob Martinez", status: "offline" },
-  { id: 3, name: "Clara Smith", status: "online" },
-  { id: 4, name: "David Lee", status: "online" },
-  { id: 5, name: "Eva Turner", status: "offline" },
-  { id: 6, name: "Frank Zhao", status: "online" },
-];
+import AuthContext from "../../contexts/AuthContext";
+import { getRequestedPeople } from "../../services/friendService";
 
 const RequestedList = () => {
-  const handleAccept = (id) => {
-    console.log(`Accepted request from user ID ${id}`);
+  const [requests, setRequests] = useState([]);
+  const [message, setMessage] = useState("");
+
+  const { user } = useContext(AuthContext);
+  const userId = user?.user?.userId;
+
+  useEffect(() => {
+    if (!userId) return;
+    getRequestedPeople(userId)
+      .then((data) => {
+        setRequests(data.requests || []);
+        setMessage(data.message || "");
+      })
+      .catch((err) => {
+        console.error("Error fetching requests:", err);
+        setRequests([]);
+        setMessage("Server error while fetching requests.");
+      });
+  }, [userId]);
+
+  // Accept friend request
+  const handleAccept = async () => {
+    // Implementation for accepting a friend request goes here
   };
 
-  const handleDecline = (id) => {
-    console.log(`Declined request from user ID ${id}`);
+  // Decline friend request
+  const handleDecline = async () => {
+    // Implementation for declining a friend request goes here
   };
 
   return (
     <div className="requested-container">
       <h2 className="requested-title">Friend Requests</h2>
+
+      {message && <p className="requested-message">{message}</p>}
+
       <ul className="requested-list">
-        {mockFriends.map((friend) => (
-          <li key={friend.id} className={`requested-item ${friend.status}`}>
-            <div className="requested-name">{friend.name}</div>
+        {requests.map((friend) => (
+          <li key={friend._id} className="requested-item">
+            <div className="requested-name">{friend.nickname}</div>
 
             <div className="requested-actions">
-              <span className="accept" onClick={() => handleAccept(friend.id)}>
+              <span className="accept" onClick={() => handleAccept(friend._id)}>
                 Accept
               </span>
               <span
                 className="decline"
-                onClick={() => handleDecline(friend.id)}
+                onClick={() => handleDecline(friend._id)}
               >
                 Decline
               </span>
@@ -40,6 +59,10 @@ const RequestedList = () => {
           </li>
         ))}
       </ul>
+
+      {requests.length === 0 && !message && (
+        <p className="requested-empty">No pending friend requests.</p>
+      )}
     </div>
   );
 };
