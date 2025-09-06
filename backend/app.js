@@ -6,6 +6,7 @@ import { Server } from 'socket.io';
 import session from 'express-session';
 import initializeDB from './models/index.js';
 import authController from './controllers/auth/authentication.js';
+import friendController from './controllers/friend/friendActions.js';
 dotenv.config();
 
 const app = express();
@@ -28,6 +29,8 @@ app.use(session({
 }))
 
 app.use('/api/auth', authController);
+app.use('/api', friendController);
+
 
 io.on('connection', (socket) => {
   console.log('User connected:', socket.id);

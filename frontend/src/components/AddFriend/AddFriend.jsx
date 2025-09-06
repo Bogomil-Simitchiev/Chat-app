@@ -1,21 +1,28 @@
-import { useState } from 'react';
-import './AddFriend.css';
+import { useContext, useState } from "react";
+import "./AddFriend.css";
+import AuthContext from "../../contexts/AuthContext";
+import { addFriend } from "../../services/friendService";
 
 const AddFriend = () => {
-  const [nickname, setNickname] = useState('');
-  const [message, setMessage] = useState('');
+  const [nickname, setNickname] = useState("");
+  const [message, setMessage] = useState("");
+
+  const { user } = useContext(AuthContext);
 
   const handleAddFriend = async (e) => {
     e.preventDefault();
 
     if (!nickname.trim()) {
-      setMessage('Please enter a nickname.');
+      setMessage("Please enter a nickname.");
       return;
     }
-    // TODO: Replace with actual API call to send friend request
-    
-    setMessage(`Friend request sent to ${nickname}`);
-    setNickname('');
+
+    addFriend(user.user.nickname, nickname)
+      .then((result) => {
+        setMessage(result.message);
+        setNickname("");
+      })
+      .catch((err) => console.log(err));
   };
 
   return (
