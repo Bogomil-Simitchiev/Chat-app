@@ -5,17 +5,22 @@ import AppRoutes from "./routes";
 import Footer from "./components/Footer/Footer";
 import Header from "./components/Header/Header";
 import { AuthProvider } from "./contexts/AuthContext";
+import { LoadingProvider } from "./contexts/LoadingContext";
+
 function App() {
+  
   return (
-    <AuthProvider>
-      <div className="app-container">
-        <Header />
-        <main className="main-content">
-          <AppRoutes />
-        </main>
-        <Footer />
-      </div>
-    </AuthProvider>
+    <LoadingProvider>
+      <AuthProvider>
+        <div className="app-container">
+          <Header />
+          <main className="main-content">
+            <AppRoutes />
+          </main>
+          <Footer />
+        </div>
+      </AuthProvider>
+    </LoadingProvider>
   );
 }
 
