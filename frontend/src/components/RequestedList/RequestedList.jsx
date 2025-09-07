@@ -32,6 +32,7 @@ const RequestedList = () => {
   // Accept friend request
   const handleAccept = async () => {
     // Implementation for accepting a friend request goes here
+    // test for the branch
   };
 
   // Decline friend request
