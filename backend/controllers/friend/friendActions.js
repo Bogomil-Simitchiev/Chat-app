@@ -87,4 +87,24 @@ router.post('/accept/:requesterId/:userId', async (req, res) => {
     }
 });
 
+router.post('/decline/:requesterId/:userId', async (req, res) => {
+    try {
+        const { requesterId, userId } = req.params;
+
+        const user = await User.findById(userId);
+        
+        if (!user) return res.status(404).json({ message: "User not found." });
+
+        user.requests = user.requests.filter((id) => id.toString() !== requesterId.toString());
+
+        await user.save();
+
+        res.status(200).json({ message: "Friend request declined!", user });
+
+    } catch (error) {
+        console.error("Error declining friend request:", error);
+        res.status(500).json({ message: "Server error." });
+    }
+});
+
 export default router;

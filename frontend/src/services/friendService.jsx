@@ -27,3 +27,12 @@ export const acceptFriendRequest = (requesterId, userId) => {
         },
     }).then(res => res.json())
 }
+
+export const declineFriendRequest = (requesterId, userId) => {
+   return fetch(`${baseURL}/api/decline/${requesterId}/${userId}`, {
+        method: 'POST',
+        headers: {
+            'content-type': 'application/json'
+        },
+    }).then(res => res.json())
+}

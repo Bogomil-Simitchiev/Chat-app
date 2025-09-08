@@ -1,7 +1,7 @@
 import { useEffect, useState, useContext } from "react";
 import "./RequestedList.css";
 import AuthContext from "../../contexts/AuthContext";
-import { acceptFriendRequest, getRequestedPeople } from "../../services/friendService";
+import { acceptFriendRequest, declineFriendRequest, getRequestedPeople } from "../../services/friendService";
 import LoadingContext from "../../contexts/LoadingContext";
 
 const RequestedList = () => {
@@ -42,7 +42,15 @@ const RequestedList = () => {
   };
 
   const handleDecline = async (requesterId) => {
-    console.log(requesterId);
+    declineFriendRequest(requesterId, userId)
+      .then(() => {
+        setRequests((prev) => prev.filter((req) => req._id !== requesterId));
+      })
+      .catch((err) => {
+        console.error("Error fetching requests:", err);
+        setRequests([]);
+        setMessage("Server error while fetching requests.");
+      });
   };
 
   return (
