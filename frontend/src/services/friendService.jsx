@@ -18,3 +18,12 @@ export const getRequestedPeople = (userId) => {
         }
     }).then(res => res.json())
 }
+
+export const acceptFriendRequest = (requesterId, userId) => {
+   return fetch(`${baseURL}/api/accept/${requesterId}/${userId}`, {
+        method: 'POST',
+        headers: {
+            'content-type': 'application/json'
+        },
+    }).then(res => res.json())
+}
