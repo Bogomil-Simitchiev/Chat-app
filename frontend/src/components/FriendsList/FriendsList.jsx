@@ -1,23 +1,44 @@
+import { useEffect, useState, useContext } from "react";
 import "./FriendsList.css";
-
-const mockFriends = [
-  { id: 1, name: "Alice Johnson", status: "online" },
-  { id: 2, name: "Bob Martinez", status: "offline" },
-  { id: 3, name: "Clara Smith", status: "online" },
-  { id: 4, name: "Alice Johnson", status: "online" },
-  { id: 5, name: "Bob Martinez", status: "offline" },
-  { id: 6, name: "Clara Smith", status: "online" },
-];
+import AuthContext from "../../contexts/AuthContext";
+import LoadingContext from "../../contexts/LoadingContext";
+import { getFriends } from "../../services/friendService";
 
 const FriendsList = () => {
+  const [friends, setFriends] = useState([]);
+
+  const { user } = useContext(AuthContext);
+  const { isLoading, startLoading, stopLoading } = useContext(LoadingContext);
+  const userId = user?.user?.userId;
+
+  useEffect(() => {
+    startLoading();
+    if (!userId) return;
+    getFriends(userId)
+      .then((data) => {
+        setFriends(data.friends || []);
+        stopLoading();
+      })
+      .catch((err) => {
+        console.error("Error fetching friends:", err);
+      });
+  }, [userId]);
+
   return (
     <div className="friends-container">
       <h2 className="friends-title">My Friends</h2>
+
       <ul className="friends-list">
-        {mockFriends.map((friend) => (
-          <li key={friend.id} className={`friend-item ${friend.status}`}>
-            <div className="friend-name">{friend.name}</div>
-            <span className="friend-status">{friend.status}</span>
+        {isLoading ? (
+          <h3>Loading...</h3>
+        ) : (
+          friends.length === 0 && (
+            <p className="requested-empty">You don't have any friends yet.</p>
+          )
+        )}
+        {friends.map((friend) => (
+          <li key={friend._id} className={`friend-item ${friend.status || ""}`}>
+            <div className="friend-name">{friend.nickname}</div>
           </li>
         ))}
       </ul>

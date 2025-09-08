@@ -6,8 +6,6 @@ import LoadingContext from "../../contexts/LoadingContext";
 
 const RequestedList = () => {
   const [requests, setRequests] = useState([]);
-  const [message, setMessage] = useState("");
-
   const { isLoading, startLoading, stopLoading } = useContext(LoadingContext);
 
   const { user } = useContext(AuthContext);
@@ -19,13 +17,11 @@ const RequestedList = () => {
     getRequestedPeople(userId)
       .then((data) => {
         setRequests(data.requests || []);
-        setMessage(data.message || "");
         stopLoading();
       })
       .catch((err) => {
         console.error("Error fetching requests:", err);
         setRequests([]);
-        setMessage("Server error while fetching requests.");
       });
   }, [userId]);
 
@@ -37,7 +33,6 @@ const RequestedList = () => {
       .catch((err) => {
         console.error("Error fetching requests:", err);
         setRequests([]);
-        setMessage("Server error while fetching requests.");
       });
   };
 
@@ -49,16 +44,12 @@ const RequestedList = () => {
       .catch((err) => {
         console.error("Error fetching requests:", err);
         setRequests([]);
-        setMessage("Server error while fetching requests.");
       });
   };
 
   return (
     <div className="requested-container">
       <h2 className="requested-title">Friend Requests</h2>
-
-      {message && <p className="requested-message">{message}</p>}
-
       <ul className="requested-list">
         {isLoading ? (
           <h3>Loading...</h3>
@@ -67,17 +58,17 @@ const RequestedList = () => {
             <p className="requested-empty">No pending friend requests.</p>
           )
         )}
-        {requests.map((friend) => (
-          <li key={friend._id} className="requested-item">
-            <div className="requested-name">{friend.nickname}</div>
+        {requests.map((requester) => (
+          <li key={requester._id} className="requested-item">
+            <div className="requested-name">{requester.nickname}</div>
 
             <div className="requested-actions">
-              <span className="accept" onClick={() => handleAccept(friend._id)}>
+              <span className="accept" onClick={() => handleAccept(requester._id)}>
                 Accept
               </span>
               <span
                 className="decline"
-                onClick={() => handleDecline(friend._id)}
+                onClick={() => handleDecline(requester._id)}
               >
                 Decline
               </span>
