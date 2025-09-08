@@ -52,6 +52,39 @@ router.get('/requests/:userId', async (req, res) => {
     }
 });
 
-// Additional routes for accepting/declining requests and removing friends can be added here
+router.post('/accept/:requesterId/:userId', async (req, res) => {
+    try {
+        const { requesterId, userId } = req.params;
+
+        const requester = await User.findById(requesterId);
+        const user = await User.findById(userId);
+
+        if (!requester || !user) {
+            return res.status(404).json({ message: "User not found." });
+        }
+
+        if (!user.requests.includes(requesterId)) {
+            return res.status(400).json({ message: "No friend request found from this user." });
+        }
+
+        if (!user.friends.includes(requesterId)) {
+            user.friends.push(requesterId);
+        }
+        if (!requester.friends.includes(userId)) {
+            requester.friends.push(userId);
+        }
+
+        user.requests = user.requests.filter((id) => id.toString() !== requesterId.toString());
+
+        await user.save();
+        await requester.save();
+
+        res.status(200).json({ message: "Friend request accepted!", user, requester });
+
+    } catch (error) {
+        console.error("Error accepting friend request:", error);
+        res.status(500).json({ message: "Server error." });
+    }
+});
 
 export default router;

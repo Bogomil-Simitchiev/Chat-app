@@ -1,14 +1,14 @@
 import { useEffect, useState, useContext } from "react";
 import "./RequestedList.css";
 import AuthContext from "../../contexts/AuthContext";
-import { getRequestedPeople } from "../../services/friendService";
+import { acceptFriendRequest, getRequestedPeople } from "../../services/friendService";
 import LoadingContext from "../../contexts/LoadingContext";
 
 const RequestedList = () => {
   const [requests, setRequests] = useState([]);
   const [message, setMessage] = useState("");
 
-   const { isLoading, startLoading, stopLoading } = useContext(LoadingContext);
+  const { isLoading, startLoading, stopLoading } = useContext(LoadingContext);
 
   const { user } = useContext(AuthContext);
   const userId = user?.user?.userId;
@@ -29,14 +29,20 @@ const RequestedList = () => {
       });
   }, [userId]);
 
-  // Accept friend request
-  const handleAccept = async () => {
-    // Implementation for accepting a friend request goes here
+  const handleAccept = async (requesterId) => {
+    acceptFriendRequest(requesterId, userId)
+      .then(() => {
+        setRequests((prev) => prev.filter((req) => req._id !== requesterId));
+      })
+      .catch((err) => {
+        console.error("Error fetching requests:", err);
+        setRequests([]);
+        setMessage("Server error while fetching requests.");
+      });
   };
 
-  // Decline friend request
-  const handleDecline = async () => {
-    // Implementation for declining a friend request goes here
+  const handleDecline = async (requesterId) => {
+    console.log(requesterId);
   };
 
   return (
@@ -46,7 +52,13 @@ const RequestedList = () => {
       {message && <p className="requested-message">{message}</p>}
 
       <ul className="requested-list">
-        {isLoading ? <h3>Loading...</h3> : requests.length === 0 &&  <p className="requested-empty">No pending friend requests.</p>}
+        {isLoading ? (
+          <h3>Loading...</h3>
+        ) : (
+          requests.length === 0 && (
+            <p className="requested-empty">No pending friend requests.</p>
+          )
+        )}
         {requests.map((friend) => (
           <li key={friend._id} className="requested-item">
             <div className="requested-name">{friend.nickname}</div>
