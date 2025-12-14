@@ -3,6 +3,8 @@ import dotenv from 'dotenv';
 dotenv.config();
 
 import './User.js';
+import './Chat.js';
+import './Message.js';
 
 const databaseName = 'chat-app';
 
