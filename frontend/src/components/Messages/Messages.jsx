@@ -1,51 +1,89 @@
-import { useState, useRef, useEffect } from 'react';
-import './Messages.css';
-
-const initialMessages = [
-  { id: 1, sender: 'You', content: 'Hey Kolega! How are you?', time: '10:01 AM' },
-  { id: 2, sender: 'Kolegata', content: "Hi! I'm good, thanks. What about you?", time: '10:02 AM' },
-  { id: 3, sender: 'You', content: "I'm doing great! Excited for the weekend?", time: '10:03 AM' },
-  { id: 4, sender: 'Kolegata', content: 'Absolutely! Any plans?', time: '10:04 AM' }
-];
+import { useState, useEffect, useRef, useContext } from "react";
+import { useParams } from "react-router-dom";
+import AuthContext from "../../contexts/AuthContext";
+import socket from "../../socket/socket.js";
+import { getOrCreateChat, getMessages } from "../../services/messageService";
+import "./Messages.css";
 
 const Messages = () => {
-  const [messages, setMessages] = useState(initialMessages);
-  const [inputValue, setInputValue] = useState('');
+  const { friendId, nickname } = useParams();
+  const { user } = useContext(AuthContext);
+  const userId = user?.user?.userId;
+
+  const [messages, setMessages] = useState([]);
+  const [chatId, setChatId] = useState(null);
+  const [inputValue, setInputValue] = useState("");
+
   const messageEndRef = useRef(null);
-  const recipient = 'Kolegata';
+
+  useEffect(() => {
+    if (!userId || !friendId) return;
+
+    getOrCreateChat(userId, friendId)
+      .then((chat) => {
+        setChatId(chat._id);
+
+        socket.emit("joinChat", {
+          chatId: chat._id,
+          userId,
+        });
+      })
+      .catch((err) => console.error("Chat error:", err));
+  }, [userId, friendId]);
+
+  useEffect(() => {
+    if (!chatId || !userId) return;
+
+    getMessages(chatId, userId)
+      .then((data) => setMessages(data))
+      .catch((err) => console.error("Messages error:", err));
+  }, [chatId, userId]);
+
+  useEffect(() => {
+    socket.on("newMessage", (msg) => {
+      setMessages((prev) => [...prev, msg]);
+    });
+
+    return () => socket.off("newMessage");
+  }, []);
 
   const handleSend = () => {
-    if (inputValue.trim() === '') return;
+    if (!inputValue.trim()) return;
 
-    const newMessage = {
-      id: messages.length + 1,
-      sender: 'You',
-      content: inputValue.trim(),
-      time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-    };
+    socket.emit("sendMessage", {
+      chatId,
+      senderId: userId,
+      content: inputValue,
+    });
 
-    setMessages((prev) => [...prev, newMessage]);
-    setInputValue('');
+    setInputValue("");
   };
 
   useEffect(() => {
-    messageEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    messageEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
   return (
     <div className="messages-container">
       <div className="messages-header">
-        <h2>Chat with {recipient}</h2>
+        <span className="friend-nickname">Chat with {nickname}</span>
       </div>
 
       <div className="messages-body">
         {messages.map((msg) => (
           <div
-            key={msg.id}
-            className={`message-bubble ${msg.sender === 'You' ? 'sent' : 'received'}`}
+            key={msg._id}
+            className={`message-bubble ${
+              msg.sender._id === userId ? "sent" : "received"
+            }`}
           >
             <div className="message-text">{msg.content}</div>
-            <div className="message-time">{msg.time}</div>
+            <div className="message-time">
+              {new Date(msg.createdAt).toLocaleTimeString([], {
+                hour: "2-digit",
+                minute: "2-digit",
+              })}
+            </div>
           </div>
         ))}
         <div ref={messageEndRef} />
@@ -53,11 +91,10 @@ const Messages = () => {
 
       <div className="messages-footer">
         <input
-          type="text"
-          placeholder="Type a message..."
           value={inputValue}
           onChange={(e) => setInputValue(e.target.value)}
-          onKeyDown={(e) => e.key === 'Enter' && handleSend()}
+          onKeyDown={(e) => e.key === "Enter" && handleSend()}
+          placeholder="Type a message..."
         />
         <button onClick={handleSend}>Send</button>
       </div>

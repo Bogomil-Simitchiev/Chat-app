@@ -3,8 +3,11 @@ import "./FriendsList.css";
 import AuthContext from "../../contexts/AuthContext";
 import LoadingContext from "../../contexts/LoadingContext";
 import { getFriends } from "../../services/friendService";
+import { useNavigate } from "react-router-dom";
+
 
 const FriendsList = () => {
+  const navigate = useNavigate();
   const [friends, setFriends] = useState([]);
 
   const { user } = useContext(AuthContext);
@@ -37,7 +40,7 @@ const FriendsList = () => {
           )
         )}
         {friends.map((friend) => (
-          <li key={friend._id} className={`friend-item ${friend.status || ""}`}>
+          <li key={friend._id} className={`friend-item ${friend.status || ""}`}  onClick={() => navigate(`/messages/${friend._id}/${friend.nickname}`)}>
             <div className="friend-name">{friend.nickname}</div>
           </li>
         ))}

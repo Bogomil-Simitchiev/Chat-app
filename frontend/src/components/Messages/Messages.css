@@ -12,11 +12,10 @@
 }
 
 .messages-header {
-  padding: 16px 20px;
+  padding: 12px 20px;
   background-color: #5050e0;
   color: white;
   font-size: 1.2rem;
-  font-weight: bold;
 }
 
 .messages-body {

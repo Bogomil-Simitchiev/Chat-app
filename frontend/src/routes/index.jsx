@@ -15,7 +15,7 @@ const AppRoutes = () => (
     <Route path="/" element={<Home />} />
     // for logged-in users
     <Route element={<IsUser />}>
-      <Route path="/messages" element={<Messages />} />
+      <Route path="/messages/:friendId/:nickname" element={<Messages />} />
       <Route path="/add-friend" element={<AddFriend />} />
       <Route path="/requests" element={<RequestedList />} />
       <Route path="/friends" element={<FriendsList />} />
